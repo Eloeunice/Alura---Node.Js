@@ -1,6 +1,7 @@
 import express from "express"
 import conectaNaDatabase from "./config/dbConnect.js"
 import routes from "./routes/index.js"
+import manipuladorDeErros from "./middlewares/manipuladordeErros.js"
 
 const conexao = await conectaNaDatabase()
 
@@ -12,9 +13,7 @@ const app = express()
 routes(app)
 
 //middleware de correção de erros
-app.use((req, res, erro, next) => {
-    
-})
+app.use(manipuladorDeErros)
 
 export default app
 

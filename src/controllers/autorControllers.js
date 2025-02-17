@@ -4,17 +4,17 @@ import { autor } from "../models/Autor.js"
 class AutorController {
 
     // static deixa eu usar os métodos de uma classe sem ter que instanciar ela
-    static async listarAutores(req,res){
+    static async listarAutores(req,res,next){
         try{
             const listaAutors = await autor.find({})
             res.status(200).json(listaAutors)
         }catch(error){
-            res.status(500).json({message: `${error.message} - falha na requisição do Autor`})
+           next(error)
         }
        
     }
 
-    static async listarAutorPorId(req,res){
+    static async listarAutorPorId(req,res, next){
         try{
             const id = req.params.id
             const AutorEncontrado = await autor.findById(id)
@@ -24,31 +24,30 @@ class AutorController {
                 res.status(400).json({message: "Erro na requisição do autor"})
             }
         }catch(error){
-            res.status(500).json({message: `${error.message} - erro interno de servidor`})
+            next(error) // o next vai encaminhar o erro obtido no controlador para o middleware de trataento de erros em app.js
         }
        
     }
 
-    static async cadastrarAutor(req,res){
+    static async cadastrarAutor(req,res, next){
         try{
             const novoAutor = await autor.create(req.body)
             res.status(200).json({ message: "Autor cadastrado com sucesso", Autor: novoAutor})
 
         }catch(error){
-            res.status(500).json({message: `${error.message} - falha ao cadastrar o novo Autor`})
+            next(error)
 
         }
     }
 
-    static async atualizarAutor(req,res) {
+    static async atualizarAutor(req,res, next) {
         try{
             const id = req.params.id
             await autor.findByIdAndUpdate(id, req.body)
             res.status(200).json({message: "Autor atualizado com sucesso"})
 
         }catch(error) {
-        res.status(500).json({message: `${error.message} - falha na atualização do Autor`})
-        }
+            next(error)        }
         
         
     }
@@ -60,7 +59,7 @@ class AutorController {
             res.status(200).json({message: "Autor deletado com sucesso"})
 
         }catch(error){
-            res.status(500).json({message: `${error.message} - falha ao excluir o Autor`})
+            next(error)
         }
         
     }
