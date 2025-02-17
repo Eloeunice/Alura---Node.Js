@@ -18,9 +18,13 @@ class AutorController {
         try{
             const id = req.params.id
             const AutorEncontrado = await autor.findById(id)
-            res.status(200).json(AutorEncontrado)
+            if(AutorEncontrado =! null){
+                res.status(200).json(AutorEncontrado)
+            } else{
+                res.status(400).json({message: "Erro na requisição do autor"})
+            }
         }catch(error){
-            res.status(500).json({message: `${error.message} - falha na requisição do Autor`})
+            res.status(500).json({message: `${error.message} - erro interno de servidor`})
         }
        
     }

@@ -11,5 +11,10 @@ conexao.once("open", () => {console.log("Banco conectado com sucesso")})
 const app = express()
 routes(app)
 
+//middleware de correção de erros
+app.use((req, res, erro, next) => {
+    
+})
+
 export default app
 
