@@ -12,6 +12,8 @@ conexao.once("open", () => {console.log("Banco conectado com sucesso")})
 const app = express()
 routes(app)
 
+app.use(manipulador404)
+
 //middleware de correção de erros
 app.use(manipuladorDeErros)
 

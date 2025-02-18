@@ -1,3 +1,4 @@
+import NaoEncontrado from "../errors/NaoEncontrado.js"
 import { autor } from "../models/Autor.js"
 // importação do modelo
 
@@ -21,7 +22,7 @@ class AutorController {
             if(AutorEncontrado =! null){
                 res.status(200).json(AutorEncontrado)
             } else{
-                res.status(400).json({message: "Erro na requisição do autor"})
+                next(new NaoEncontrado("ID do autor não localizado")) // nova instancia do erro
             }
         }catch(error){
             next(error) // o next vai encaminhar o erro obtido no controlador para o middleware de trataento de erros em app.js
@@ -43,11 +44,14 @@ class AutorController {
     static async atualizarAutor(req,res, next) {
         try{
             const id = req.params.id
-            await autor.findByIdAndUpdate(id, req.body)
-            res.status(200).json({message: "Autor atualizado com sucesso"})
-
+            const autorEncontrado = await autor.findByIdAndUpdate(id, req.body)
+            if(autorEncontrado != null) {
+                res.status(200).json({message: "Autor atualizado com sucesso"})
+            } else { 
+                next(new NaoEncontrado("ID do autor nao localizado")) }
         }catch(error) {
-            next(error)        }
+            next(error)
+                   }
         
         
     }
@@ -55,8 +59,11 @@ class AutorController {
     static async deletarAutor(req,res) {
         try{
             const id = req.params.id
-            await autor.findByIdAndDelete(id)
-            res.status(200).json({message: "Autor deletado com sucesso"})
+            const autorEncontrado = await autor.findByIdAndDelete(id)
+            if (autorEncontrado != null){
+                res.status(200).json({message: "Autor deletado com sucesso"})
+            } else (next(new NaoEncontrado("Id do autor nao localizado")))
+           
 
         }catch(error){
             next(error)
